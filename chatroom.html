@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Chat</title>
+</head>
+<body>
+
+    <div id="room"></div>
+
+    <input type="text" id="txtMsg"></br>
+    <button type="submit" onClick="sendMessage()">send message</button>
+
+    <script>
+        var socket = io.connect('localhost:3000')
+
+        socket.on('all', function(data){
+          document.getElementById("room").innerHTML += "all: " + data + "<br/>";
+        });
+
+        function sendMessage(){
+          var chat = document.getElementById('txtMsg').value
+          socket.emit('message', chat)
+        }
+    </script>
+
+</body>
+</html>
