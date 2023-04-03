@@ -1,18 +1,21 @@
-var express = require('express')
-var app = new express()
+const express = require('express')
+const app = express()
+const indexRoutes = require('./routes/index_routes')
+const driverRoutes = require('./routes/client_routes')
+const mongoose = require('mongoose')
 
-var http = require('http').createServer(app)
-var io = require('socket.io')(http)
+mongoose.connect('mongodb://127.0.0.1:27017/company', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
-io.on('connect', function(client){
-    client.on('message', function(data){
+app.use(express.json())
 
-        io.sockets.emit('all', data)         
-    })
-});
+indexRoutes(app)
+driverRoutes(app)
 
-app.get('/', function(req, res){
-    res.sendFile(__dirname+'/chatroom.html')
-});
-  
-http.listen(3000)
+app.use((err, req, res, next)=>{
+  res.status(422).send({error: err.message})
+})
+
+module.exports = app;
